@@ -29,6 +29,19 @@ uv run --frozen uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 
 This is a single-user development application without account authentication. Keep the default loopback binding for local development.
 
+## Open the app in a browser through Render
+
+The cloud onboarding workspace does not provide a browser preview. The repository includes a Render Blueprint for a hosted demo:
+
+1. Open [Deploy to Render](https://render.com/deploy?repo=https://github.com/jonnagaddalamohansai/ai-agent-).
+2. Sign in to Render and connect this GitHub repository if prompted.
+3. Review the service and plan, then create the Blueprint. It uses `render.yaml` to install the locked dependencies and start the server.
+4. Wait for the service to become live, then open the HTTPS URL shown on the service dashboard.
+
+This link starts deployment setup; the app receives its URL after deployment succeeds. Render account authorization and hosting availability must be handled in Render. Free services may sleep when inactive.
+
+The public demo deliberately leaves `AGENT_API_KEY` empty. Personal live AI use requires access control before adding a provider key: the current API has no authentication, so visitors could otherwise make requests using that key. The local and cloud development workflow below can use the key on the default loopback binding.
+
 ## Enable live AI responses
 
 In the cloud environment settings, add the `AGENT_API_KEY` secret for the HTTPS destination `api.openai.com`. Enter the value securely in settings, then restart the application after the binding reaches the running environment. The key stays on the server and is never part of the browser configuration.

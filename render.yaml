@@ -1,0 +1,14 @@
+# Browser-accessible demo. Connect this repository to a Render Blueprint.
+services:
+  - type: web
+    name: agent-desk
+    runtime: python
+    plan: free
+    buildCommand: pip install uv==0.12.23 && uv sync --frozen
+    startCommand: .venv/bin/uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.14
+      - key: AGENT_API_KEY
+        value: ""
