@@ -12,3 +12,5 @@ services:
         value: 3.12.14
       - key: AGENT_API_KEY
         value: ""
+      - key: AGENT_ACCESS_PASSWORD
+        value: ""

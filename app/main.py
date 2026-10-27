@@ -10,6 +10,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from app.agent import AgentError, demo_reply, live_reply
+from app.auth import access_error
 from app.config import Settings
 from app.tools import TOOL_DEFINITIONS
 
@@ -63,14 +64,20 @@ def create_app(
 
     @application.middleware("http")
     async def security_headers(request: Request, call_next):
-        response = await call_next(request)
+        response = access_error(request, settings)
+        if response is None:
+            response = await call_next(request)
         response.headers["X-Content-Type-Options"] = "nosniff"
         response.headers["Referrer-Policy"] = "same-origin"
         response.headers["Content-Security-Policy"] = (
             "default-src 'self'; script-src 'self'; style-src 'self'; "
             "img-src 'self' data:; connect-src 'self'; base-uri 'self'; frame-ancestors 'none'"
         )
-        if request.url.path.startswith("/api/"):
+        if (
+            request.url.path.startswith("/api/")
+            or settings.access_password
+            or response.status_code >= 400
+        ):
             response.headers["Cache-Control"] = "no-store"
         return response
 

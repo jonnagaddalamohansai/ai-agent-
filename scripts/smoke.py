@@ -1,6 +1,8 @@
 """Validate a running server without paid requests or third-party dependencies."""
 
+import base64
 import json
+import os
 import sys
 from urllib.error import HTTPError
 from urllib.request import Request, urlopen
@@ -8,10 +10,15 @@ from urllib.request import Request, urlopen
 
 def main() -> None:
     base = (sys.argv[1] if len(sys.argv) > 1 else "http://127.0.0.1:8000").rstrip("/")
+    password = os.environ.get("AGENT_ACCESS_PASSWORD", "")
+    headers = {"Content-Type": "application/json"}
+    if password:
+        credentials = base64.b64encode(f"owner:{password}".encode()).decode()
+        headers["Authorization"] = f"Basic {credentials}"
 
     def request(path: str, payload: dict | None = None) -> tuple[int, bytes]:
         body = json.dumps(payload).encode() if payload is not None else None
-        req = Request(base + path, data=body, headers={"Content-Type": "application/json"})
+        req = Request(base + path, data=body, headers=headers)
         with urlopen(req, timeout=10) as response:
             return response.status, response.read()
 

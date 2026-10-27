@@ -2,7 +2,7 @@
 
 A general AI assistant web app with a Python API and a responsive browser interface. Ask questions, keep conversations in your browser, and let the assistant use a calculator or check the current time.
 
-The app starts in **local demo mode** when no API key is configured. This mode runs the calculator and time tools and returns a few explanatory sample replies. General AI responses require an OpenAI API key; demo replies do not call an AI model.
+The app starts in **local demo mode** when no API key is configured. This mode runs the calculator and time tools and returns a few explanatory sample replies. General AI responses require an OpenAI API key and an access password; demo replies do not call an AI model.
 
 ## Requirements
 
@@ -27,7 +27,7 @@ For automatic backend reloads during development:
 uv run --frozen uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 ```
 
-This is a single-user development application without account authentication. Keep the default loopback binding for local development.
+This is a single-user application. Setting an access password enables HTTP Basic authentication with the username `owner`. Keep the default loopback binding for local development.
 
 ## Open the app in a browser through Render
 
@@ -40,20 +40,37 @@ The cloud onboarding workspace does not provide a browser preview. The repositor
 
 This link starts deployment setup; the app receives its URL after deployment succeeds. Render account authorization and hosting availability must be handled in Render. Free services may sleep when inactive.
 
-The public demo deliberately leaves `AGENT_API_KEY` empty. Personal live AI use requires access control before adding a provider key: the current API has no authentication, so visitors could otherwise make requests using that key. The local and cloud development workflow below can use the key on the default loopback binding.
+The public demo leaves both `AGENT_API_KEY` and `AGENT_ACCESS_PASSWORD` empty. Add both values to enable password-protected live AI. Setting a password also protects demo mode, so you can check the login before connecting an API key.
+
+If you create the Render service manually, choose **New → Web Service** and select Python. Use `uv sync --frozen` as the Build Command and `.venv/bin/uvicorn app.main:app --host 0.0.0.0 --port $PORT` as the Start Command. Leave Root Directory blank and set Health Check Path to `/api/health`.
+
+If Render reports `Publish directory build does not exist`, the service is configured as a Static Site; create a Web Service instead. If it reports `ai-agent: command not found` or exit status 127, replace the service's Start Command with the command above, save, and redeploy.
 
 ## Enable live AI responses
 
-In the cloud environment settings, add the `AGENT_API_KEY` secret for the HTTPS destination `api.openai.com`. Enter the value securely in settings, then restart the application after the binding reaches the running environment. The key stays on the server and is never part of the browser configuration.
+For an app already running on Render:
 
-For local development, copy `.env.example` to `.env`, enter your key in that ignored file, and start with `bash scripts/start.sh`. Do not commit the file. The start script loads `.env` when it exists. If you use the direct Uvicorn command instead, add `--env-file .env` to load that file.
+1. Open the service's **Environment** settings.
+2. Add `AGENT_API_KEY` with your OpenAI API key and `AGENT_ACCESS_PASSWORD` with a strong password you choose. Enter these values securely in Render, not in chat or GitHub files.
+3. Save the settings and redeploy the service.
+4. Open the app URL. In the browser's login prompt, enter username **`owner`** and the password you set.
+5. Confirm the page shows **Live AI mode**, then send a general question to verify your key and model access.
+
+An OpenAI API account needs API credit or billing; a ChatGPT subscription does not include API usage. The API key stays on the server and is never part of the browser configuration.
+
+For local development, copy `.env.example` to `.env`, set both values in that ignored file, and start with `bash scripts/start.sh`. Do not commit the file. The start script loads `.env` when it exists. If you use the direct Uvicorn command instead, add `--env-file .env` to load that file.
+
+In the cloud environment settings, add the `AGENT_API_KEY` secret for the HTTPS destination `api.openai.com` and supply `AGENT_ACCESS_PASSWORD` as a private server environment value. The password must be available directly to the app for local authentication, rather than supplied as a network-proxy placeholder. Restart after the settings reach the running environment.
 
 | Variable | Purpose | Default |
 | --- | --- | --- |
 | `AGENT_API_KEY` | Server-side OpenAI API credential; leaving it empty enables local demo mode | Empty |
+| `AGENT_ACCESS_PASSWORD` | Password for HTTP Basic login as `owner`; required when an API key is set | Empty |
 | `AGENT_MODEL` | OpenAI model used for live responses | `gpt-4.1-mini` |
 | `HOST` | Server listen address used by the start script | `127.0.0.1` |
 | `PORT` | Server port used by the start script | `8000` |
+
+Setting `AGENT_ACCESS_PASSWORD` protects the web interface, static files, and chat API. The health endpoint remains available without a login. If an API key is set without an access password, the app returns HTTP 503, including on the health endpoint, until the password is configured. This is a shared owner login, not a multi-user account system.
 
 Live responses use the OpenAI chat completions API and may incur provider charges. Calculator and current-time tools run on the application server. There is no shell execution or web browsing tool.
 
@@ -69,6 +86,8 @@ bash scripts/check.sh
 # Functional HTTP check against the running server
 python3 scripts/smoke.py
 ```
+
+The smoke check uses `AGENT_ACCESS_PASSWORD` from its process environment to authenticate when a password is configured. If your values are in the ignored `.env` file, load them for the check with `uv run --frozen --env-file .env python scripts/smoke.py`. Credentials do not belong in command-line arguments. In live mode, the smoke check verifies the app without sending a paid AI request; use an authenticated chat to verify the provider connection.
 
 The smoke check uses `http://127.0.0.1:8000` by default. To check another local port, pass the base URL:
 
@@ -100,4 +119,4 @@ Conversation history is stored in this browser's local storage. It is not a serv
 
 Cloud tasks already run in an isolated environment. Use the existing checkout at `/workspace/ai-agent-`; no additional Git worktree is needed. Dependencies and files can be retained in the published environment snapshot, but running server processes must be started again in future tasks.
 
-The onboarding setup saves installation and startup instructions as a configuration draft. Saving a draft does not execute those instructions, apply credentials, or publish the environment. Review and save the configuration in environment settings, then publish the prepared environment when ready. Securely provide `AGENT_API_KEY` there only if you want live AI responses.
+The onboarding setup saves installation and startup instructions as a configuration draft. Saving a draft does not execute those instructions, apply credentials, or publish the environment. Review and save the configuration in environment settings, then publish the prepared environment when ready. Securely provide both `AGENT_API_KEY` and `AGENT_ACCESS_PASSWORD` there only if you want live AI responses.

@@ -329,7 +329,7 @@
       elements['mode-label'].textContent = data.mode === 'live' ? 'Live AI mode' : 'Local demo';
       elements['mode-notice'].textContent = data.mode === 'live'
         ? `Using ${data.model}. Your messages are sent to the configured AI provider.`
-        : 'Demo mode · Local sample replies and built-in tools. Configure a server API key to enable AI conversation.';
+        : 'Demo mode · Local sample replies and built-in tools. Configure a server API key and access password to enable AI conversation.';
       hideError();
     } catch (error) {
       config = null;

@@ -10,7 +10,13 @@ from app.main import create_app
 
 def client_for(handler=None, api_key=""):
     transport = httpx.MockTransport(handler) if handler is not None else None
-    return TestClient(create_app(Settings(api_key=api_key), transport=transport))
+    password = "test-access-password" if api_key else ""
+    client = TestClient(
+        create_app(Settings(api_key=api_key, access_password=password), transport=transport)
+    )
+    if password:
+        client.auth = ("owner", password)
+    return client
 
 
 def answer(content):

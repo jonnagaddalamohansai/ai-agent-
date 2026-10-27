@@ -61,7 +61,8 @@ def demo_reply(messages: list[dict[str, str]]) -> dict[str, Any]:
             "I can calculate arithmetic (try 'Calculate 24 * 7') or check the current time "
             "(try 'What time is it in Asia/Kolkata?').\n\n"
             "For general questions, writing, and planning, enable live AI with an API key "
-            "in the server's environment settings. Your chats stay in this browser."
+            "and access password in the server's environment settings. "
+            "Chat history is saved in this browser."
         )
     return {"reply": reply, "mode": "demo", "tool_calls": calls}
 
