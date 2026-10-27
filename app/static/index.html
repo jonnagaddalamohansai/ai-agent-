@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f7f8f5">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='10' fill='%23366345'/%3E%3Ctext x='20' y='29' text-anchor='middle' font-size='30' fill='white'%3E%E2%9C%B3%3C/text%3E%3C/svg%3E">
+    <title>Agent Desk — a little help, a clearer next step</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <script src="/static/app.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#prompt">Skip to message</a>
+    <button class="sidebar-backdrop" id="sidebar-backdrop" aria-label="Close conversations" tabindex="-1" hidden></button>
+    <aside class="sidebar" id="sidebar" aria-label="Conversations">
+      <a class="brand" href="/" aria-label="Agent Desk home"><span class="brand-mark" aria-hidden="true">a<span>✳</span></span><span>agent desk<span class="brand-caption">YOUR EVERYDAY CO-PILOT</span></span></a>
+      <button class="new-chat" id="new-chat"><span aria-hidden="true">＋</span> New conversation <span class="key-hint" aria-hidden="true">→</span></button>
+      <div class="history-heading"><h2>YOUR CONVERSATIONS</h2><span id="history-count">0</span></div>
+      <nav class="history" id="history" aria-label="Saved conversations"></nav>
+      <div class="sidebar-bottom">
+        <div class="workspace-mark" aria-hidden="true">AD</div>
+        <div><strong>Personal workspace</strong><span>History saved in this browser</span></div>
+      </div>
+    </aside>
+    <main class="workspace">
+      <header class="topbar">
+        <div class="topbar-left"><button class="icon-button menu-button" id="menu-button" aria-label="Open conversations" aria-controls="sidebar" aria-expanded="false">☰</button><span class="workspace-label">Workspace</span><span class="breadcrumb" aria-hidden="true">/</span><h1 id="conversation-title">New conversation</h1></div>
+        <span class="mode-badge" id="mode-badge"><span class="status-dot" aria-hidden="true"></span><span id="mode-label">Connecting…</span></span>
+      </header>
+      <div class="mode-notice" id="mode-notice" aria-live="polite">Connecting to your assistant…</div>
+      <div class="chat-scroll" id="chat-scroll">
+        <section class="welcome" id="welcome" aria-labelledby="welcome-title">
+          <span class="welcome-symbol" aria-hidden="true">✳</span>
+          <p class="eyebrow">A LITTLE HELP. A CLEARER NEXT STEP.</p>
+          <h2 id="welcome-title">What’s on your mind?</h2>
+          <p class="welcome-copy">A space to untangle ideas, work through a problem,<br class="desktop-break"> and turn a blank page into a starting point.</p>
+          <div class="suggestions" aria-label="Try a conversation starter">
+            <button class="suggestion" data-prompt="Help me plan my day and decide what to focus on first."><span class="suggestion-icon" aria-hidden="true">◎</span><strong>Make a little progress</strong><span>Find a clear plan for the day</span><span class="suggestion-arrow" aria-hidden="true">→</span></button>
+            <button class="suggestion" data-prompt="Calculate (125 * 8) + 360 / 4"><span class="suggestion-icon" aria-hidden="true">⌗</span><strong>Work out the numbers</strong><span>Try the built-in calculator</span><span class="suggestion-arrow" aria-hidden="true">→</span></button>
+            <button class="suggestion" data-prompt="What time is it in Asia/Kolkata?"><span class="suggestion-icon" aria-hidden="true">◷</span><strong>Check another time zone</strong><span>Get the current local time</span><span class="suggestion-arrow" aria-hidden="true">→</span></button>
+          </div>
+          <div class="capabilities"><span class="capabilities-dot" aria-hidden="true"></span><span>Built-in tools, a clean slate, and room to think.</span></div>
+        </section>
+        <section class="messages" id="messages" aria-label="Conversation messages" aria-live="polite" aria-relevant="additions" hidden></section>
+      </div>
+      <div class="composer-area">
+        <div class="error-notice" id="error-notice" role="alert" hidden><span id="error-text"></span><button id="retry-button" type="button">Try again</button><button class="dismiss-error" id="dismiss-error" type="button" aria-label="Dismiss error">×</button></div>
+        <form class="composer" id="chat-form">
+          <label class="sr-only" for="prompt">Your message</label>
+          <textarea id="prompt" name="message" rows="1" maxlength="12000" placeholder="Ask a question, share an idea, start somewhere…" required></textarea>
+          <div class="composer-bottom"><span class="composer-hint"><span aria-hidden="true">↵</span> Enter to send <span class="hint-divider">·</span> Shift + Enter for a new line</span><button class="send-button" id="send-button" type="submit" aria-label="Send message" disabled>↑</button><button class="stop-button" id="stop-button" type="button" hidden><span aria-hidden="true">■</span> Stop</button></div>
+        </form>
+        <p class="footnote" id="footnote">History is saved in this browser. Check important information.</p>
+      </div>
+    </main>
+  </body>
+</html>
